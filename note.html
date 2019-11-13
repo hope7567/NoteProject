@@ -28,6 +28,9 @@
         align-items: center;
         margin: 0.5rem
       }
+      .note{
+        margin-bottom: 0.5rem
+      }
     </style>
   </head>
   <body>
@@ -37,7 +40,7 @@
           <h1 class="text-center mb-5">Ma liste de note</h1>
           <div id="app">
             <ul class="list-group">
-              <li class="list-group-note" v-for="note in listeNote" :key="note.id">
+              <li class="list-group-note note" v-for="note in listeNote" :key="note.id">
                   <textarea
                   type="text"
                   class="form-control form-control-lg"
