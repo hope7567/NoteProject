@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <style>
+      .list-group-note {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .compteur{
+        white-space: nowrap;
+      }
+      .plop{
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        margin: 0.5rem
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container mt-4">
+      <div class="row justify-content-center">
+        <div class="col-12 col-sm-10 col-md-8 col-lg-6">
+          <h1 class="text-center mb-5">Ma liste de note</h1>
+          <div id="app">
+            <ul class="list-group">
+              <li class="list-group-note" v-for="note in listeNote" :key="note.id">
+                  <textarea
+                  type="text"
+                  class="form-control form-control-lg"
+                  :value = "note.name"
+                  v-on:change.passive="modNote($event, note)"
+                ></textarea>
+                
+                <div class="plop">
+                  <a href="#" class="btn btn-danger btn-sm float-right" @click="removeNote(note)">Delete</a>
+                  <div class="compteur">{{ note.nbCarac }} caractères</div>
+                </div>
+              </li>
+            </ul>
+
+            <div class="card mt-5">
+              <div class="card-body">
+                <form>
+                  <div class="form-group">
+                    <textarea
+                      type="text"
+                      class="form-control form-control-lg"
+                      id="todo"
+                      placeholder="Enter something you have to do..."
+                      v-model="note"
+                    ></textarea>
+                  </div>
+                  <button class="btn btn-primary btn-block btn-lg" @click.submit.prevent="addNote">Valider</button>
+                  <div class="compteur">{{ afficheNbCarac(note) }}</div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let app = new Vue({
+        el: "#app",
+        data: {
+          listeNote: [],
+          note: "",
+          nombreCarac : ""
+        },
+        methods: {
+            addNote: function () 
+            {
+                if (!this.note) 
+                {
+                    return;
+                }
+
+                let newNote = 
+                {
+                    id: Date.now(),
+                    name: this.note,
+                    nbCarac: this.note.length
+                }
+
+                this.listeNote.push(newNote)
+                localStorage.setItem('listeNote', JSON.stringify(this.listeNote))
+                this.note = ""
+            },
+
+            afficheNbCarac: function (note) {
+
+              return note.length > 1 ? note.length + " caractères" : note.length + " caractère"
+            },
+
+            modNote: function (event, note) {
+              let indexOld = this.listeNote.indexOf(note)
+              this.listeNote[indexOld].name = event.target.value
+              this.listeNote[indexOld].nbCarac = event.target.value.length
+
+              console.log(event.target.value.length)
+
+              localStorage.setItem('listeNote', JSON.stringify(this.listeNote))
+            },
+
+            removeNote: function (note) {
+                let newListeNote = this.listeNote.filter((listeNote) => listeNote.id != note.id)
+                this.listeNote = newListeNote
+                localStorage.setItem('listeNote', JSON.stringify(this.listeNote))
+            }
+        },
+        mounted: function () {
+               this.listeNote = JSON.parse(localStorage.getItem('listeNote')) || []
+            }
+      });
+    </script>
+  </body>
+</html>
